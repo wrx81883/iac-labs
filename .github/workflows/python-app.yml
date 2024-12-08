@@ -38,7 +38,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd iac-labs/example-app/
+        cd example-app/
         poetry install --no-root
 
   # Job 2: Lint
