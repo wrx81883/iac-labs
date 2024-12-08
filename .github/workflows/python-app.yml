@@ -11,7 +11,6 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -41,27 +40,21 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
-
       run: |
         pytest
-        jobs:
-          some-name:
 
-            runs-on: some-os
-
-            defaults:
-              run:
-                working-directory: ./example-app
-
-            steps:
-              git clone https://github.com/wrx81883/iac-labs.git
-              cd iac-labs/example-app
-              curl -sSL https://install.python-poetry.org | python3 -
-              export PATH=$PATH:$HOME/.local/bin
-              poetry debug info
-              poetry install --no-root
-              poetry run task test
-              poetry run task lint
-              poetry run task formatter
-              poetry run task security
-              
+  some-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repo
+        run: git clone https://github.com/wrx81883/iac-labs.git
+      - name: Set up Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          export PATH=$PATH:$HOME/.local/bin
+          poetry debug info
+          poetry install --no-root
+          poetry run task test
+          poetry run task lint
+          poetry run task formatter
+          poetry run task security
