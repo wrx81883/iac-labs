@@ -155,5 +155,3 @@ jobs:
       run: |
         cd example-app/
         poetry run pytest
-
-        poetry run pytest
