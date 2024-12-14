@@ -33,7 +33,11 @@ jobs:
     - name: Install Poetry
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
-        export PATH=$PATH:$HOME/.local/bin
+        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+          echo "C:\Users\runneradmin\AppData\Roaming\Python\Scripts" >> $GITHUB_PATH
+        else
+          export PATH=$PATH:$HOME/.local/bin
+        fi
         poetry --version
 
     - name: Cache build venv
