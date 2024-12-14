@@ -14,7 +14,7 @@ defaults:
     shell: bash
 
 jobs:
-  # Job 1: Build
+  # Job 1: Buil
   build:
     runs-on: ${{ matrix.os }}
     strategy:
