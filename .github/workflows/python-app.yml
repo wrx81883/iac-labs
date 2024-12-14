@@ -9,10 +9,17 @@ on:
 permissions:
   contents: read
 
+defaults:
+  run:
+    shell: bash  # Ustawienie powłoki Bash dla systemu Windows
+
 jobs:
   # Job 1: Build
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]  # Testowanie na różnych systemach operacyjnych
     concurrency:
       group: build-group
 
@@ -147,4 +154,6 @@ jobs:
     - name: Run unit tests
       run: |
         cd example-app/
+        poetry run pytest
+
         poetry run pytest
