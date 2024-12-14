@@ -14,7 +14,7 @@ defaults:
     shell: bash  # Ustawienie powłoki Bash dla systemu Windows
 
 jobs:
-  # Job 1: Build
+  # Job1: Build
   build:
     runs-on: ${{ matrix.os }}
     strategy:
