@@ -53,6 +53,11 @@ jobs:
         cd example-app/
         poetry install --no-root
 
+    # Install psycopg2-binary with PEP 517 support
+    - name: Install psycopg2-binary with PEP 517
+      run: |
+        pip install --no-cache-dir --use-pep517 psycopg2-binary==2.9.10
+
   # Job 2: Lint
   lint:
     runs-on: ubuntu-latest
@@ -149,7 +154,7 @@ jobs:
         cd example-app/
         poetry run bandit -r .
 
-  # Job 5: Unit test
+  # Job 5: Unit tests
   unittests:
     runs-on: ubuntu-latest
     needs: [lint, formatter, security]
