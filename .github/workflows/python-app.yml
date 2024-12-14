@@ -14,7 +14,7 @@ defaults:
     shell: bash
 
 jobs:
-  # Job 1: Buil
+  # Job 1: Build
   build:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -54,9 +54,10 @@ jobs:
         poetry install --no-root
 
     # Install psycopg2-binary with PEP 517 support
-    - name: Install psycopg2-binary with PEP 517
+    - name: Install psycopg2-binary with PEP 517 workaround
       run: |
-        pip install --no-cache-dir --use-pep517 psycopg2-binary==2.9.10
+        pip wheel --no-cache-dir --use-pep517 "psycopg2-binary==2.9.10"
+        pip install psycopg2-binary==2.9.10
 
   # Job 2: Lint
   lint:
