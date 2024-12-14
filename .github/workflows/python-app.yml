@@ -1,4 +1,20 @@
+name: Python application
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
 jobs:
+  # Job 1: Build
   build:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -47,3 +63,131 @@ jobs:
     - name: Install psycopg2-binary (Precompiled)
       run: |
         pip install psycopg2-binary==2.9.10 --only-binary :all:
+
+  # Job 2: Lint
+  lint:
+    runs-on: ubuntu-latest
+    needs: build
+    concurrency:
+      group: lint-group
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.13"
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+    - name: Verify Poetry installation
+      run: poetry --version
+
+    - name: Cache build venv
+      uses: actions/cache@v3
+      with:
+        path: example-app/.venv
+        key: ${{ runner.os }}-venv
+
+    - name: Run linter
+      run: |
+        cd example-app/
+        poetry run flake8 .
+
+  # Job 3: Formatter
+  formatter:
+    runs-on: ubuntu-latest
+    needs: build
+    concurrency:
+      group: formatter-group
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.13"
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+    - name: Verify Poetry installation
+      run: poetry --version
+
+    - name: Cache build venv
+      uses: actions/cache@v3
+      with:
+        path: example-app/.venv
+        key: ${{ runner.os }}-venv
+
+    - name: Run formatter
+      run: |
+        cd example-app/
+        poetry run black .
+
+  # Job 4: Security
+  security:
+    runs-on: ubuntu-latest
+    needs: build
+    concurrency:
+      group: security-group
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.13"
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+    - name: Verify Poetry installation
+      run: poetry --version
+
+    - name: Cache build venv
+      uses: actions/cache@v3
+      with:
+        path: example-app/.venv
+        key: ${{ runner.os }}-venv
+
+    - name: Security checks
+      run: |
+        cd example-app/
+        poetry run bandit -r .
+
+  # Job 5: Unit tests
+  unittests:
+    runs-on: ubuntu-latest
+    needs: [lint, formatter, security]
+    concurrency:
+      group: unittests-group
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.13"
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+    - name: Verify Poetry installation
+      run: poetry --version
+
+    - name: Cache build venv
+      uses: actions/cache@v3
+      with:
+        path: example-app/.venv
+        key: ${{ runner.os }}-venv
+
+    - name: Run unit tests
+      run: |
+        cd example-app/
+        poetry run pytest
